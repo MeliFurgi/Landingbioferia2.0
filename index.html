@@ -1,0 +1,431 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bioferia — orbitemos consciente · 09, 10 y 11 de abril 2027</title>
+<meta name="description" content="Bioferia: tres días en el Hipódromo de Palermo, Buenos Aires. Entradas, mapa, stands y merch.">
+<link rel="icon" type="image/png" href="assets/img/logo-bioferia.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&amp;family=Caveat:wght@500;600&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<div id="app"></div>
+
+<!-- Plantilla de la página: la interpreta js/runtime.js con los datos de js/app.js -->
+<template id="bf-template">
+<div style="position: relative; width: 100%; min-height: 100vh; background: #FFF2F2; color: #0E0B1F; font-family: Inter, system-ui, sans-serif; font-size: 16px; line-height: 1.5; overflow-x: hidden">
+
+
+
+<!-- ============ INTRO 2: ANIMACIÓN DEL LOGO ============ -->
+<sc-if value="{{ showLogo }}" hint-placeholder-val="{{ false }}">
+<div role="img" aria-label="Animación del logo de Bioferia: orbitemos consciente" style="position: fixed; top: 0; left: 0; z-index: 90; width: 100%; height: min(100vh, 900px); background: #FEF0F1; opacity: {{logoOpacity}}; transition: opacity .7s ease">
+<video ref="{{ setLogoVideo }}" src="assets/video/logo-intro.mp4" muted="muted" playsinline="playsinline" preload="auto" aria-hidden="true" style="display: block; width: 100%; height: 100%; object-fit: contain; background: #FEF0F1"></video>
+<button class="bf-chip" onClick="{{ skipLogo }}" style="position: absolute; right: 28px; bottom: 28px; min-height: 44px; padding: 10px 18px; border: 2px solid #0E0B1F; border-radius: 999px; background: transparent; color: #0E0B1F; font-weight: 600; font-size: 14px; cursor: pointer">Saltar</button>
+</div>
+</sc-if>
+
+<!-- ============ INTRO: RASPA Y GANA ============ -->
+<sc-if value="{{ showIntro }}" hint-placeholder-val="{{ true }}">
+<div role="dialog" aria-label="Rascá la pantalla para entrar a Bioferia" style="position: fixed; top: 0; left: 0; z-index: 100; width: 100%; height: min(100vh, 900px)">
+<canvas ref="{{ setCanvas }}" onPointerMove="{{ onScratch }}" onPointerLeave="{{ onLift }}" onPointerUp="{{ onLift }}" aria-hidden="true" style="display: block; width: 100%; height: 100%; touch-action: none; cursor: crosshair; background: #C9CCD3"></canvas>
+<div style="position: absolute; left: 0; right: 0; bottom: 28px; display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 16px; padding: 0 24px; pointer-events: none">
+<div aria-hidden="true" style="width: min(320px, 70vw); height: 10px; border-radius: 999px; background: rgba(14,11,31,0.18); overflow: hidden">
+<div style="height: 100%; width: {{progressPct}}%; background: #0E0B1F; border-radius: 999px"></div>
+</div>
+<button class="bf-chip" onClick="{{ skip }}" style="pointer-events: auto; min-height: 44px; padding: 10px 18px; border: 2px solid #0E0B1F; border-radius: 999px; background: rgba(255,255,255,0.6); color: #0E0B1F; font-weight: 600; font-size: 14px; cursor: pointer">Entrar sin rascar</button>
+</div>
+</div>
+</sc-if>
+
+<div style="position: relative; z-index: 1">
+
+<!-- ============ NAV ============ -->
+<header style="position: sticky; top: 0; z-index: 50; background: rgba(255,242,242,0.88); backdrop-filter: blur(8px); border-bottom: 1px solid rgba(14,11,31,0.12)">
+<nav aria-label="Principal" style="position: relative; z-index: 1; max-width: 1320px; margin: 0 auto; padding: 12px 24px; display: flex; align-items: center; justify-content: space-between; gap: 16px">
+<a href="#inicio" style="display: flex; align-items: center; min-height: 44px">
+<img src="assets/img/logo-bioferia.png" alt="Bioferia, orbitemos consciente" style="height: 42px; width: auto; display: block">
+</a>
+<div class="bf-navlinks" style="display: flex; gap: 24px; font-weight: 500; font-size: 15px">
+<sc-for list="{{ navLinks }}" as="n" hint-placeholder-count="6">
+<a href="{{n.href}}" style="text-decoration: none; display: inline-flex; align-items: center; gap: 8px; min-height: 44px">
+<span aria-hidden="true" style="width: 9px; height: 9px; transform: rotate(45deg); background: {{n.color}}"></span>{{n.label}}</a>
+</sc-for>
+</div>
+<a class="bf-btn" href="#entradas" style="min-height: 44px; padding: 10px 20px; border-radius: 999px; background: #0E0B1F; color: {{accent}}; text-decoration: none; font-weight: 700; font-size: 15px; display: inline-flex; align-items: center">Comprar entradas</a>
+</nav>
+</header>
+
+<!-- ============ HERO ============ -->
+<section id="inicio" style="position: relative; overflow: hidden">
+<div aria-hidden="true" style="position: absolute; left: 0; right: 0; top: 120px; height: 1px; background: rgba(14,11,31,0.14)"></div>
+<div aria-hidden="true" style="position: absolute; top: 0; bottom: 0; left: 62%; width: 1px; background: rgba(14,11,31,0.14)"></div>
+<div aria-hidden="true" class="bf-p2" style="position: absolute; right: -90px; top: 90px; width: 420px; height: 420px; border-radius: 50%; background: #7B3FE4"></div>
+<div aria-hidden="true" class="bf-p1" style="position: absolute; right: 230px; top: 420px; width: 220px; height: 300px; background: {{accent}}"></div>
+<div aria-hidden="true" class="bf-dots bf-p3" style="position: absolute; right: 120px; top: 640px; width: 220px; height: 160px; opacity: 0.55; border-radius: 50% 50% 0 0"></div>
+<div aria-hidden="true" style="position: absolute; left: -60px; top: 560px; width: 180px; height: 180px; border-radius: 50%; background: #FF6A1A; opacity: 0.9"></div>
+
+<div style="position: relative; position: relative; z-index: 1; max-width: 1320px; margin: 0 auto; padding: 72px 24px 120px">
+<p style="margin: 0 0 30px; font-family: 'Libre Caslon Text', serif; font-style: italic; font-size: 22px">Un recorrido por la <b>historia del planeta.</b></p>
+<h1 style="margin: 0; display: flex; flex-direction: column">
+<span style="font-family: Inter, sans-serif; font-weight: 900; font-size: clamp(76px, 13vw, 200px); line-height: 0.82; letter-spacing: -0.015em">orbitemos</span>
+<span style="align-self: flex-start; margin-top: 10px; padding: 0 18px 6px; background: {{accent}}; font-family: 'Libre Caslon Text', serif; font-style: italic; font-weight: 700; font-size: clamp(56px, 9.5vw, 148px); line-height: 1.05; letter-spacing: -0.02em; color: #2440E6">consciente.</span>
+</h1>
+
+<div style="margin-top: 64px; display: flex; flex-wrap: wrap; gap: 48px; align-items: flex-end; justify-content: space-between">
+<div style="flex: 1 1 420px; max-width: 560px; display: flex; flex-direction: column; gap: 24px">
+<p style="margin: 0; font-size: 20px; line-height: 1.5">Tres días para recorrer, en capas, lo que fuimos y lo que viene: <b>resiliencia, incomodidad, estar en órbita, quórum, bioluminiscencia</b> y <i style="font-family: 'Libre Caslon Text', serif">palimpsesto</i>.</p>
+<div style="display: flex; flex-wrap: wrap; gap: 12px">
+<a class="bf-btn" href="#entradas" style="min-height: 52px; padding: 14px 26px; border-radius: 999px; background: #0E0B1F; color: {{accent}}; text-decoration: none; font-weight: 700; font-size: 17px; display: inline-flex; align-items: center">Comprar entradas</a>
+<a class="bf-btn" href="#afiches" style="min-height: 52px; padding: 14px 26px; border-radius: 999px; border: 2px solid #0E0B1F; text-decoration: none; font-weight: 700; font-size: 17px; display: inline-flex; align-items: center">Ver los conceptos</a>
+</div>
+</div>
+<div style="flex: 0 1 460px; position: relative; background: #FFFFFF; border: 2px solid #0E0B1F; border-radius: 6px; padding: 28px 30px; box-shadow: 10px 10px 0 #2440E6; transform: rotate(-2deg)">
+<p style="margin: 0; font-size: 13px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase">Abril 2027</p>
+<p style="margin: 4px 0 8px; font-family: Inter, sans-serif; font-weight: 900; font-size: 64px; line-height: 1; letter-spacing: -0.02em">09 · 10 · 11</p>
+<p style="margin: 0; font-size: 18px; font-weight: 600">Hipódromo de Palermo<br>Buenos Aires</p>
+<p class="bf-hand" style="margin: 16px 0 0; font-size: 26px; line-height: 1.1; color: #2440E6">Existir es un oficio de profundidades, un constante habitar en capas.</p>
+</div>
+</div>
+</div>
+<div ref="{{ printRefs.r0 }}" aria-hidden="true" class="bf-print {{ prints.p0.cls }}" style="{{ prints.p0.pos }}; transform: rotate({{ prints.p0.rot }}deg)">
+<div class="pp" style="border-radius: {{ prints.p0.br }}"></div><div class="pb2" style="border-radius: {{ prints.p0.br2 }}"></div><div class="pb" style="border-radius: {{ prints.p0.br }}"></div>
+<div class="pl">
+<sc-if value="{{ prints.p0.isLogo }}" hint-placeholder-val="{{ false }}"><img src="assets/img/hojas-logo-mascara.png" alt="" style="position: absolute; left: {{ prints.p0.ix }}px; top: 70px; width: 150px; height: auto; filter: brightness(0) invert(1); opacity: 0.95; transform: rotate({{ prints.p0.irot }}deg)"></sc-if>
+<sc-if value="{{ prints.p0.isSvg }}" hint-placeholder-val="{{ false }}"><svg viewBox="0 0 300 300" width="300" height="300" style="position: absolute; left: 0; top: 0"><path d="{{ prints.p0.d }}" fill="#FFFFFF" fill-opacity="0.94"></path><path d="{{ prints.p0.stem }}" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-opacity="0.94"></path></svg></sc-if>
+</div>
+<span class="pt" style="{{ prints.p0.tpos }}">{{ prints.p0.label }}</span>
+</div>
+</section>
+
+<!-- ============ AFICHES (CARRUSEL) ============ -->
+<section id="afiches" style="position: relative; padding: 40px 0 110px">
+<div style="position: relative; z-index: 1; max-width: 1320px; margin: 0 auto; padding: 64px 24px 0">
+<div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 24px">
+<div>
+<p style="margin: 0 0 12px; font-weight: 700; font-size: 13px; letter-spacing: 0.16em; text-transform: uppercase; display: flex; align-items: center; gap: 10px"><span aria-hidden="true" style="width: 11px; height: 11px; transform: rotate(45deg); background: #7B3FE4"></span>Capa 01 · Los conceptos</p>
+<h2 class="rv" style="margin: 0; font-family: Inter, sans-serif; font-weight: 900; font-size: clamp(48px, 6.5vw, 96px); line-height: 0.92; letter-spacing: -0.022em">Seis capas, <span style="font-family: 'Libre Caslon Text', serif; font-style: italic; font-weight: 700; letter-spacing: -0.02em; color: #7B3FE4">un mismo suelo</span></h2>
+</div>
+<div style="display: flex; gap: 10px">
+<button class="bf-btn" aria-label="Afiche anterior" onClick="{{ prevPoster }}" style="width: 52px; height: 52px; border-radius: 50%; border: 2px solid #0E0B1F; background: transparent; color: #0E0B1F; cursor: pointer; display: flex; align-items: center; justify-content: center"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5 M11 6l-6 6 6 6"></path></svg></button>
+<button class="bf-btn" aria-label="Afiche siguiente" onClick="{{ nextPoster }}" style="width: 52px; height: 52px; border-radius: 50%; border: 0; background: #0E0B1F; color: {{accent}}; cursor: pointer; display: flex; align-items: center; justify-content: center"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14 M13 6l6 6-6 6"></path></svg></button>
+</div>
+</div>
+</div>
+
+<div onMouseEnter="{{ pausePosters }}" onMouseLeave="{{ resumePosters }}" style="position: relative; z-index: 1; height: 620px; margin-top: 48px; overflow: hidden">
+<sc-for list="{{ posters }}" as="p" hint-placeholder-count="6">
+<button class="bf-poster" aria-label="Ver afiche {{p.name}}" onClick="{{ p.pick }}" style="position: absolute; left: 50%; top: 20px; width: 400px; height: 564px; margin-left: -200px; padding: 0; border: 0; background: transparent; cursor: pointer; transform: {{p.tf}}; opacity: {{p.op}}; z-index: {{p.z}}; filter: {{p.filter}}">
+<img src="{{p.src}}" alt="Afiche {{p.name}}: {{p.phrase}}" style="display: block; width: 100%; height: 100%; object-fit: cover; box-shadow: 0 24px 50px rgba(14,11,31,0.28)">
+</button>
+</sc-for>
+</div>
+
+<div style="position: relative; z-index: 1; max-width: 760px; margin: 28px auto 0; padding: 0 24px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 14px" aria-live="polite">
+<span style="padding: 6px 16px; border-radius: 999px; background: {{poster.color}}; color: {{poster.fg}}; font-weight: 700; font-size: 14px; letter-spacing: 0.08em; text-transform: uppercase">{{poster.name}}</span>
+<p style="margin: 0; font-family: 'Libre Caslon Text', serif; font-style: italic; font-size: 28px; line-height: 1.3">{{poster.phrase}}</p>
+<div style="display: flex; gap: 8px; margin-top: 4px">
+<sc-for list="{{ posterDots }}" as="d" hint-placeholder-count="6">
+<button class="bf-chip" aria-label="Ir al afiche {{d.name}}" aria-pressed="{{d.active}}" onClick="{{ d.pick }}" style="width: {{d.w}}px; height: 12px; border: 0; border-radius: 999px; background: {{d.bg}}; cursor: pointer; padding: 0; transition: width .3s ease"></button>
+</sc-for>
+</div>
+</div>
+<div ref="{{ printRefs.r1 }}" aria-hidden="true" class="bf-print {{ prints.p1.cls }}" style="{{ prints.p1.pos }}; transform: rotate({{ prints.p1.rot }}deg)">
+<div class="pp" style="border-radius: {{ prints.p1.br }}"></div><div class="pb2" style="border-radius: {{ prints.p1.br2 }}"></div><div class="pb" style="border-radius: {{ prints.p1.br }}"></div>
+<div class="pl">
+<sc-if value="{{ prints.p1.isLogo }}" hint-placeholder-val="{{ false }}"><img src="assets/img/hojas-logo-mascara.png" alt="" style="position: absolute; left: {{ prints.p1.ix }}px; top: 70px; width: 150px; height: auto; filter: brightness(0) invert(1); opacity: 0.95; transform: rotate({{ prints.p1.irot }}deg)"></sc-if>
+<sc-if value="{{ prints.p1.isSvg }}" hint-placeholder-val="{{ false }}"><svg viewBox="0 0 300 300" width="300" height="300" style="position: absolute; left: 0; top: 0"><path d="{{ prints.p1.d }}" fill="#FFFFFF" fill-opacity="0.94"></path><path d="{{ prints.p1.stem }}" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-opacity="0.94"></path></svg></sc-if>
+</div>
+<span class="pt" style="{{ prints.p1.tpos }}">{{ prints.p1.label }}</span>
+</div>
+</section>
+
+<!-- ============ ENTRADAS ============ -->
+<section id="entradas" style="position: relative; padding: 0 0 110px">
+<div style="position: relative; z-index: 1; max-width: 1320px; margin: 0 auto; padding: 72px 24px 0">
+<div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 24px; margin-bottom: 24px">
+<div>
+<p style="margin: 0 0 12px; font-weight: 700; font-size: 13px; letter-spacing: 0.16em; text-transform: uppercase; display: flex; align-items: center; gap: 10px"><span aria-hidden="true" style="width: 11px; height: 11px; transform: rotate(45deg); background: #FF6A1A"></span>Capa 02 · Entradas</p>
+<h2 class="rv" style="margin: 0; font-family: Inter, sans-serif; font-weight: 900; font-size: clamp(48px, 6.5vw, 96px); line-height: 0.92; letter-spacing: -0.022em">Elegí <span style="font-family: 'Libre Caslon Text', serif; font-style: italic; font-weight: 700; letter-spacing: -0.02em; color: #FF6A1A">tu día</span></h2>
+</div>
+<p style="margin: 0; max-width: 400px; font-size: 17px">Tres jornadas, tres historias. Sumá entradas de uno o varios días y comprá todo junto.</p>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 28px">
+<sc-for list="{{ tickets }}" as="tk" hint-placeholder-count="3">
+<article class="rv" style="display: flex; flex-direction: column; gap: 14px">
+<div class="bf-ticket" style="aspect-ratio: 1400 / 1087; display: flex; align-items: center; justify-content: center">
+<img src="{{tk.src}}" alt="Ticket de Bioferia del {{tk.date}}: {{tk.phrase}}" style="width: 112%; max-width: none; height: auto; display: block; filter: drop-shadow(0 14px 18px rgba(14,11,31,0.22))">
+</div>
+<div style="background: #FFFFFF; border: 2px solid #0E0B1F; border-radius: 6px; padding: 18px 20px; display: flex; flex-direction: column; gap: 10px; box-shadow: 8px 8px 0 {{tk.color}}">
+<div style="display: flex; justify-content: space-between; align-items: baseline; gap: 10px">
+<span style="font-family: Inter, sans-serif; font-weight: 900; font-size: 26px; letter-spacing: -0.02em">{{tk.day}}</span>
+<span style="font-weight: 700; font-size: 15px">{{tk.date}}</span>
+</div>
+<p style="margin: 0; font-family: 'Libre Caslon Text', serif; font-style: italic; font-size: 17px; line-height: 1.35">{{tk.phrase}}</p>
+<div style="display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-top: 4px">
+<span style="font-family: Inter, sans-serif; font-weight: 800; font-size: 24px">{{tk.priceLabel}}</span>
+<div style="display: flex; align-items: center; gap: 6px; background: #FFF2F2; border: 2px solid #0E0B1F; border-radius: 999px; padding: 3px">
+<button class="bf-chip" aria-label="Quitar una entrada del {{tk.date}}" onClick="{{ tk.dec }}" style="width: 44px; height: 44px; border: 0; border-radius: 50%; background: transparent; color: #0E0B1F; font-size: 22px; font-weight: 700; cursor: pointer">−</button>
+<span aria-live="polite" style="min-width: 26px; text-align: center; font-weight: 800">{{tk.qty}}</span>
+<button class="bf-chip" aria-label="Agregar una entrada del {{tk.date}}" onClick="{{ tk.add }}" style="width: 44px; height: 44px; border: 0; border-radius: 50%; background: #0E0B1F; color: {{accent}}; font-size: 22px; font-weight: 700; cursor: pointer">+</button>
+</div>
+</div>
+</div>
+</article>
+</sc-for>
+</div>
+
+<div role="region" aria-label="Resumen de compra" style="margin-top: 36px; background: #0E0B1F; color: #FFF2F2; border-radius: 6px; padding: 22px 28px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 20px">
+<sc-if value="{{ bought }}" hint-placeholder-val="{{ false }}">
+<p role="status" style="margin: 0; font-size: 18px; font-weight: 600; flex: 1 1 400px"><span style="color: {{accent}}; font-weight: 800">¡Listo!</span> {{ticketCount}} entradas por {{totalLabel}}. Acá se conecta la pasarela de pago y las entradas llegan por email con QR.</p>
+<button class="bf-btn" onClick="{{ resetTickets }}" style="min-height: 52px; padding: 12px 24px; border: 2px solid #FFF2F2; border-radius: 999px; background: transparent; color: #FFF2F2; font-weight: 700; font-size: 16px; cursor: pointer">Hacer otra compra</button>
+</sc-if>
+<sc-if value="{{ notBought }}" hint-placeholder-val="{{ true }}">
+<div style="display: flex; flex-wrap: wrap; gap: 8px 22px; align-items: baseline; flex: 1 1 400px">
+<span style="font-size: 14px; letter-spacing: 0.12em; text-transform: uppercase; color: #C9C3D9">Total</span>
+<span style="font-family: Inter, sans-serif; font-weight: 900; font-size: 40px; color: {{accent}}">{{totalLabel}}</span>
+<span style="font-size: 15px; color: #C9C3D9">{{summaryLine}}</span>
+</div>
+<button class="bf-btn" onClick="{{ buy }}" aria-disabled="{{noTickets}}" style="min-height: 56px; padding: 14px 32px; border: 0; border-radius: 999px; background: {{buyBg}}; color: #0E0B1F; font-weight: 800; font-size: 17px; cursor: pointer">Comprar entradas</button>
+</sc-if>
+</div>
+<p style="margin: 12px 0 0; font-size: 13px; color: #4A4560">Precios de ejemplo en pesos argentinos.</p>
+</div>
+<div ref="{{ printRefs.r4 }}" aria-hidden="true" class="bf-print {{ prints.p4.cls }}" style="{{ prints.p4.pos }}; transform: rotate({{ prints.p4.rot }}deg)">
+<div class="pp" style="border-radius: {{ prints.p4.br }}"></div><div class="pb2" style="border-radius: {{ prints.p4.br2 }}"></div><div class="pb" style="border-radius: {{ prints.p4.br }}"></div>
+<div class="pl">
+<sc-if value="{{ prints.p4.isLogo }}" hint-placeholder-val="{{ false }}"><img src="assets/img/hojas-logo-mascara.png" alt="" style="position: absolute; left: {{ prints.p4.ix }}px; top: 70px; width: 150px; height: auto; filter: brightness(0) invert(1); opacity: 0.95; transform: rotate({{ prints.p4.irot }}deg)"></sc-if>
+<sc-if value="{{ prints.p4.isSvg }}" hint-placeholder-val="{{ false }}"><svg viewBox="0 0 300 300" width="300" height="300" style="position: absolute; left: 0; top: 0"><path d="{{ prints.p4.d }}" fill="#FFFFFF" fill-opacity="0.94"></path><path d="{{ prints.p4.stem }}" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-opacity="0.94"></path></svg></sc-if>
+</div>
+<span class="pt" style="{{ prints.p4.tpos }}">{{ prints.p4.label }}</span>
+</div>
+</section>
+
+<!-- ============ MAPA ============ -->
+<section id="mapa" style="position: relative; padding: 0 0 110px">
+<div style="position: relative; z-index: 1; max-width: 1320px; margin: 0 auto; padding: 72px 24px 0">
+<div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 20px; margin-bottom: 40px">
+<div>
+<p style="margin: 0 0 12px; font-weight: 700; font-size: 13px; letter-spacing: 0.16em; text-transform: uppercase; display: flex; align-items: center; gap: 10px"><span aria-hidden="true" style="width: 11px; height: 11px; transform: rotate(45deg); background: #2440E6"></span>Capa 03 · Mapa</p>
+<h2 class="rv" style="margin: 0; font-family: Inter, sans-serif; font-weight: 900; font-size: clamp(48px, 6.5vw, 96px); line-height: 0.92; letter-spacing: -0.022em">Recorré <span style="font-family: 'Libre Caslon Text', serif; font-style: italic; font-weight: 700; letter-spacing: -0.02em; color: #2440E6">la feria</span></h2>
+</div>
+<p style="margin: 0; max-width: 380px; font-size: 17px">Hipódromo de Palermo. Cada concepto es una zona con su color: tocá una para ver qué hay.</p>
+</div>
+
+<div style="position: relative">
+<div aria-hidden="true" inert="inert" style="filter: blur(4px) grayscale(0.35); opacity: 0.5; pointer-events: none; user-select: none">
+<div style="display: flex; flex-wrap: wrap; gap: 24px; align-items: stretch">
+<div style="flex: 999 1 640px; min-width: 0; overflow-x: auto; border-radius: 28px">
+<div style="position: relative; min-width: 680px; aspect-ratio: 16 / 10; background-color: #FFFFFF; background-image: radial-gradient(rgba(14,11,31,0.16) 1.4px, transparent 1.5px); background-size: 22px 22px; border-radius: 28px; border: 2px solid #0E0B1F">
+<sc-for list="{{ zonesMap }}" as="z" hint-placeholder-count="6">
+<button class="bf-zone" aria-pressed="{{z.selected}}" onClick="{{ z.pick }}" style="position: absolute; left: {{z.x}}%; top: {{z.y}}%; width: {{z.w}}%; height: {{z.h}}%; background: {{z.color}}; color: {{z.fg}}; border: 2px solid #0E0B1F; border-radius: 20px; box-shadow: {{z.shadow}}; padding: 14px; display: flex; flex-direction: column; justify-content: space-between; align-items: flex-start; text-align: left; cursor: pointer">
+<span style="font-family: Inter, sans-serif; font-weight: 800; font-size: clamp(15px, 1.6vw, 22px); line-height: 1.05">{{z.name}}</span>
+<span style="font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 999px; background: rgba(14,11,31,0.85); color: #FFF2F2">Zona {{z.code}}</span>
+</button>
+</sc-for>
+<sc-for list="{{ pins }}" as="p" hint-placeholder-count="4">
+<span aria-hidden="true" style="position: absolute; left: {{p.x}}%; top: {{p.y}}%; transform: translate(-50%, -50%); width: 34px; height: 34px; border-radius: 50%; background: #0E0B1F; border: 3px solid {{accent}}; display: flex; align-items: center; justify-content: center">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="{{accent}}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="{{p.icon}}"></path></svg>
+</span>
+</sc-for>
+</div>
+</div>
+
+<aside aria-live="polite" style="flex: 1 1 320px; min-width: 0; background: #FFFFFF; border: 2px solid #0E0B1F; border-radius: 28px; padding: 28px; display: flex; flex-direction: column; gap: 16px; box-shadow: 10px 10px 0 {{zone.color}}">
+<span style="align-self: flex-start; padding: 6px 12px; border-radius: 999px; background: {{zone.color}}; color: {{zone.fg}}; border: 2px solid #0E0B1F; font-weight: 700; font-size: 13px">Zona {{zone.code}}</span>
+<h3 style="margin: 0; font-family: Inter, sans-serif; font-weight: 900; font-size: 38px; line-height: 1; letter-spacing: -0.015em">{{zone.name}}</h3>
+<p style="margin: 0; font-family: 'Libre Caslon Text', serif; font-style: italic; font-size: 19px">{{zone.desc}}</p>
+<ul style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 8px">
+<sc-for list="{{ zoneStands }}" as="s" hint-placeholder-count="2">
+<li style="display: flex; gap: 10px; align-items: center"><span style="font-size: 12px; font-weight: 800; padding: 2px 8px; border-radius: 6px; background: #0E0B1F; color: {{accent}}">{{s.code}}</span><span>{{s.name}}</span></li>
+</sc-for>
+</ul>
+<button class="bf-btn" onClick="{{ seeZoneStands }}" style="margin-top: auto; min-height: 48px; border: 0; border-radius: 999px; background: #0E0B1F; color: {{accent}}; font-weight: 700; font-size: 15px; cursor: pointer">Ver stands de esta zona</button>
+<div style="border-top: 1px solid rgba(14,11,31,0.15); padding-top: 14px; display: flex; flex-wrap: wrap; gap: 14px; font-size: 13px">
+<sc-for list="{{ pins }}" as="p" hint-placeholder-count="4">
+<span style="display: inline-flex; align-items: center; gap: 6px"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0E0B1F" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="{{p.icon}}"></path></svg>{{p.label}}</span>
+</sc-for>
+</div>
+</aside>
+</div>
+</div>
+<div role="status" style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; padding: 24px">
+<div style="background: #FFFFFF; border: 2px solid #0E0B1F; border-radius: 8px; padding: 32px 40px; max-width: 520px; text-align: center; box-shadow: 10px 10px 0 #2440E6; display: flex; flex-direction: column; align-items: center; gap: 14px">
+<span style="display: inline-flex; align-items: center; gap: 10px; padding: 6px 16px; border-radius: 999px; background: {{accent}}; border: 2px solid #0E0B1F; font-weight: 800; font-size: 14px; letter-spacing: 0.12em; text-transform: uppercase"><span aria-hidden="true" style="width: 9px; height: 9px; transform: rotate(45deg); background: #0E0B1F"></span>En proceso</span>
+<p style="margin: 0; font-family: Inter, sans-serif; font-weight: 900; font-size: 34px; line-height: 1.05; letter-spacing: -0.02em">Estamos trazando el mapa</p>
+<p style="margin: 0; font-family: 'Libre Caslon Text', serif; font-style: italic; font-size: 18px">Muy pronto vas a poder recorrer la feria zona por zona.</p>
+</div>
+</div>
+</div>
+</div>
+<div ref="{{ printRefs.r2 }}" aria-hidden="true" class="bf-print {{ prints.p2.cls }}" style="{{ prints.p2.pos }}; transform: rotate({{ prints.p2.rot }}deg)">
+<div class="pp" style="border-radius: {{ prints.p2.br }}"></div><div class="pb2" style="border-radius: {{ prints.p2.br2 }}"></div><div class="pb" style="border-radius: {{ prints.p2.br }}"></div>
+<div class="pl">
+<sc-if value="{{ prints.p2.isLogo }}" hint-placeholder-val="{{ false }}"><img src="assets/img/hojas-logo-mascara.png" alt="" style="position: absolute; left: {{ prints.p2.ix }}px; top: 70px; width: 150px; height: auto; filter: brightness(0) invert(1); opacity: 0.95; transform: rotate({{ prints.p2.irot }}deg)"></sc-if>
+<sc-if value="{{ prints.p2.isSvg }}" hint-placeholder-val="{{ false }}"><svg viewBox="0 0 300 300" width="300" height="300" style="position: absolute; left: 0; top: 0"><path d="{{ prints.p2.d }}" fill="#FFFFFF" fill-opacity="0.94"></path><path d="{{ prints.p2.stem }}" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-opacity="0.94"></path></svg></sc-if>
+</div>
+<span class="pt" style="{{ prints.p2.tpos }}">{{ prints.p2.label }}</span>
+</div>
+</section>
+
+<!-- ============ STANDS ============ -->
+<section id="stands" style="position: relative; padding: 0 0 110px">
+<div style="position: relative; z-index: 1; max-width: 1320px; margin: 0 auto; padding: 72px 24px 0">
+<p style="margin: 0 0 12px; font-weight: 700; font-size: 13px; letter-spacing: 0.16em; text-transform: uppercase; display: flex; align-items: center; gap: 10px"><span aria-hidden="true" style="width: 11px; height: 11px; transform: rotate(45deg); background: #7B3FE4"></span>Capa 04 · Stands</p>
+<div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 24px">
+<h2 class="rv" style="margin: 0; font-family: Inter, sans-serif; font-weight: 900; font-size: clamp(48px, 6.5vw, 96px); line-height: 0.92; letter-spacing: -0.022em">Recorré <span style="font-family: 'Libre Caslon Text', serif; font-style: italic; font-weight: 700; letter-spacing: -0.02em; color: #7B3FE4">los espacios</span></h2>
+<div role="group" aria-label="Ir a los espacios de una zona" style="display: flex; flex-wrap: wrap; gap: 8px; max-width: 760px">
+<sc-for list="{{ filters }}" as="f" hint-placeholder-count="6">
+<button class="bf-chip" aria-pressed="{{f.active}}" onClick="{{ f.pick }}" style="min-height: 44px; padding: 8px 16px; border-radius: 999px; border: 2px solid #0E0B1F; background: {{f.bg}}; color: {{f.fg}}; font-weight: 600; font-size: 14px; display: inline-flex; align-items: center; gap: 8px; cursor: pointer">
+<span aria-hidden="true" style="width: 9px; height: 9px; transform: rotate(45deg); background: {{f.dot}}; border: 1px solid #0E0B1F"></span>{{f.label}}</button>
+</sc-for>
+</div>
+</div>
+</div>
+
+<div onPointerDown="{{ ringDown }}" onPointerUp="{{ ringUp }}" onMouseEnter="{{ pauseRing }}" onMouseLeave="{{ resumeRing }}" style="position: relative; z-index: 1; height: 540px; margin-top: 28px; perspective: 1800px; perspective-origin: 50% 35%; overflow: hidden; touch-action: pan-y; cursor: grab; user-select: none">
+<div style="position: absolute; left: 50%; top: 36px; width: 0; height: 0; transform-style: preserve-3d; transform: translateZ(-{{ringR}}px) rotateY({{ringRot}}deg); transition: transform 1s cubic-bezier(.2,.8,.2,1)">
+<sc-for list="{{ standCards }}" as="c" hint-placeholder-count="5">
+<button class="bf-standcard" aria-label="Ver {{c.name}}" onClick="{{ c.pick }}" style="position: absolute; left: -170px; top: 0; width: 340px; padding: 0; border: 2px solid #0E0B1F; border-radius: 8px; background: #FFFFFF; overflow: hidden; cursor: pointer; text-align: left; transform: rotateY({{c.ang}}deg) translateZ({{ringR}}px); backface-visibility: hidden; opacity: {{c.op}}; filter: {{c.filter}}; box-shadow: 10px 10px 0 {{c.color}}; transition: opacity .6s ease, filter .6s ease">
+<img src="{{c.img}}" alt="" draggable="false" style="display: block; width: 100%; height: 240px; object-fit: cover">
+<span style="display: flex; flex-direction: column; gap: 8px; padding: 16px 18px 18px">
+<span style="display: flex; justify-content: space-between; align-items: center; gap: 8px">
+<span style="font-family: Inter, sans-serif; font-weight: 900; font-size: 22px; letter-spacing: -0.01em; color: #0E0B1F">{{c.code}}</span>
+<span style="font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 999px; background: {{c.color}}; color: {{c.fg}}; border: 1.5px solid #0E0B1F">{{c.zoneName}}</span>
+</span>
+<span style="font-family: 'Libre Caslon Text', serif; font-weight: 700; font-size: 21px; line-height: 1.2; color: #0E0B1F">{{c.name}}</span>
+<span style="font-size: 13px; color: #4A4560">{{c.sizeLabel}}</span>
+</span>
+</button>
+</sc-for>
+</div>
+<button class="bf-btn" aria-label="Espacio anterior" onClick="{{ prevStand }}" style="position: absolute; left: max(16px, calc(50% - 300px)); top: 200px; width: 56px; height: 56px; border-radius: 50%; border: 2px solid #0E0B1F; background: #FFF2F2; color: #0E0B1F; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 5"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5 M11 6l-6 6 6 6"></path></svg></button>
+<button class="bf-btn" aria-label="Espacio siguiente" onClick="{{ nextStand }}" style="position: absolute; right: max(16px, calc(50% - 300px)); top: 200px; width: 56px; height: 56px; border-radius: 50%; border: 0; background: #0E0B1F; color: {{accent}}; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 5"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14 M13 6l6 6-6 6"></path></svg></button>
+<p style="position: absolute; left: 0; right: 0; bottom: 8px; margin: 0; text-align: center; font-size: 13px; color: #4A4560">Arrastrá o usá las flechas para girar · {{standPos}}</p>
+</div>
+
+<div aria-live="polite" style="position: relative; z-index: 1; max-width: 1320px; margin: 20px auto 0; padding: 0 24px">
+<div style="display: flex; flex-wrap: wrap; gap: 28px; background: #FFFFFF; border: 2px solid #0E0B1F; border-radius: 8px; padding: 24px; box-shadow: 10px 10px 0 {{stand.color}}">
+<div style="flex: 1.4 1 520px; min-width: 0">
+<img src="{{stand.detail}}" alt="{{stand.name}}: {{stand.alt}}" style="display: block; width: 100%; height: auto; border-radius: 4px">
+</div>
+<div style="flex: 1 1 320px; min-width: 0; display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap">
+<span style="font-family: Inter, sans-serif; font-weight: 900; font-size: 20px">{{stand.code}}</span>
+<span style="font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 999px; background: {{stand.color}}; color: {{stand.fg}}; border: 1.5px solid #0E0B1F">{{stand.zoneName}}</span>
+<sc-if value="{{ stand.hasSize }}" hint-placeholder-val="{{ false }}"><span style="font-size: 13px; font-weight: 700; padding: 4px 10px; border-radius: 999px; border: 1.5px solid #0E0B1F">Planta {{stand.size}}</span></sc-if>
+</div>
+<h3 style="margin: 0; font-family: Inter, sans-serif; font-weight: 900; font-size: 36px; line-height: 1; letter-spacing: -0.02em">{{stand.name}}</h3>
+<p style="margin: 0; font-size: 17px; line-height: 1.55">{{stand.desc}}</p>
+<p style="margin: 0; font-family: 'Libre Caslon Text', serif; font-style: italic; font-size: 18px; color: #3B3852">{{stand.phrase}}</p>
+<div style="margin-top: auto; display: flex; flex-wrap: wrap; gap: 10px">
+<button class="bf-btn" onClick="{{ seeOnMap }}" style="min-height: 48px; padding: 10px 20px; border: 0; border-radius: 999px; background: #0E0B1F; color: {{accent}}; font-weight: 700; font-size: 15px; cursor: pointer">Ver en el mapa</button>
+<button class="bf-btn" onClick="{{ nextStand }}" style="min-height: 48px; padding: 10px 20px; border: 2px solid #0E0B1F; border-radius: 999px; background: transparent; color: #0E0B1F; font-weight: 700; font-size: 15px; cursor: pointer">Siguiente espacio</button>
+</div>
+</div>
+</div>
+</div>
+<div ref="{{ printRefs.r3 }}" aria-hidden="true" class="bf-print {{ prints.p3.cls }}" style="{{ prints.p3.pos }}; transform: rotate({{ prints.p3.rot }}deg)">
+<div class="pp" style="border-radius: {{ prints.p3.br }}"></div><div class="pb2" style="border-radius: {{ prints.p3.br2 }}"></div><div class="pb" style="border-radius: {{ prints.p3.br }}"></div>
+<div class="pl">
+<sc-if value="{{ prints.p3.isLogo }}" hint-placeholder-val="{{ false }}"><img src="assets/img/hojas-logo-mascara.png" alt="" style="position: absolute; left: {{ prints.p3.ix }}px; top: 70px; width: 150px; height: auto; filter: brightness(0) invert(1); opacity: 0.95; transform: rotate({{ prints.p3.irot }}deg)"></sc-if>
+<sc-if value="{{ prints.p3.isSvg }}" hint-placeholder-val="{{ false }}"><svg viewBox="0 0 300 300" width="300" height="300" style="position: absolute; left: 0; top: 0"><path d="{{ prints.p3.d }}" fill="#FFFFFF" fill-opacity="0.94"></path><path d="{{ prints.p3.stem }}" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-opacity="0.94"></path></svg></sc-if>
+</div>
+<span class="pt" style="{{ prints.p3.tpos }}">{{ prints.p3.label }}</span>
+</div>
+</section>
+
+
+<!-- ============ MERCH ============ -->
+<section id="merch" style="position: relative; padding: 0 0 110px; background: {{mBg}}; color: {{mInk}}; transition: background .7s ease, color .7s ease">
+<div style="position: relative; z-index: 1; max-width: 1320px; margin: 0 auto; padding: 72px 24px 0">
+<p style="margin: 0 0 12px; font-weight: 700; font-size: 13px; letter-spacing: 0.16em; text-transform: uppercase; display: flex; align-items: center; gap: 10px"><span aria-hidden="true" style="width: 11px; height: 11px; transform: rotate(45deg); background: #CF1477"></span>Capa 05 · Merch</p>
+<div style="display: flex; flex-wrap: wrap; gap: 48px; align-items: center">
+
+<div role="img" aria-label="{{product.name}} de Bioferia en 3D. Arrastrá para girarlo." onPointerDown="{{ m3Down }}" onPointerMove="{{ m3Move }}" onPointerUp="{{ m3Up }}" onPointerCancel="{{ m3Up }}" onMouseEnter="{{ pauseMerch }}" onMouseLeave="{{ resumeMerch }}" style="position: relative; flex: 1 1 520px; min-width: 0; height: 620px; perspective: 1300px; perspective-origin: 50% 40%; cursor: grab; touch-action: none; user-select: none; overflow: hidden">
+<div aria-hidden="true" style="position: absolute; left: 50%; top: 50%; width: 540px; height: 540px; margin: -270px 0 0 -270px; border-radius: 50%; background: radial-gradient(circle, {{product.glow}} 0%, rgba(0,0,0,0) 62%)"></div>
+<div aria-hidden="true" class="bf-orbit" style="position: absolute; left: 50%; top: 50%; width: 520px; height: 520px; margin: -260px 0 0 -260px; border-radius: 50%; border: 1.5px solid {{mLine}}">
+<span style="position: absolute; left: 50%; top: -8px; width: 16px; height: 16px; margin-left: -8px; transform: rotate(45deg); background: {{product.color}}"></span>
+</div>
+<div aria-hidden="true" style="position: absolute; left: 50%; top: 520px; width: 300px; height: 56px; margin-left: -150px; border-radius: 50%; background: radial-gradient(ellipse, {{mShadow}} 0%, rgba(0,0,0,0) 70%)"></div>
+<div aria-hidden="true" style="position: absolute; left: 50%; top: 300px; width: 0; height: 0; transform-style: preserve-3d">
+<div ref="{{ setObj }}" style="position: absolute; left: 0; top: 0; width: 0; height: 0; transform-style: preserve-3d; transform: rotateX({{rx0}}deg) rotateY(-25deg)">
+<sc-for list="{{ faces }}" as="f" hint-placeholder-count="40">
+<div class="{{f.cls}}" data-a="{{f.a}}" data-sh="{{f.sh}}" style="position: absolute; left: {{f.l}}px; top: {{f.t}}px; width: {{f.w}}px; height: {{f.h}}px; transform: {{f.tf}}; background-color: {{f.bg}}; background-size: {{f.bs}}; background-position: {{f.bp}}; background-repeat: no-repeat; border-radius: {{f.br}}; backface-visibility: hidden; box-shadow: {{f.glow}}"></div>
+</sc-for>
+</div>
+</div>
+<p style="position: absolute; left: 0; right: 0; bottom: 4px; margin: 0; text-align: center; font-size: 13px; opacity: 0.75">Objeto 3D · arrastrá para girarlo en todas las direcciones</p>
+</div>
+
+<div style="flex: 1 1 400px; min-width: 0; display: flex; flex-direction: column; gap: 20px">
+<h2 class="rv" style="margin: 0; font-family: Inter, sans-serif; font-weight: 900; font-size: clamp(48px, 6.5vw, 96px); line-height: 0.92; letter-spacing: -0.022em">Llevate <span style="font-family: 'Libre Caslon Text', serif; font-style: italic; font-weight: 700; letter-spacing: -0.02em; color: {{mAccentText}}">una capa</span></h2>
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px">
+<span style="font-family: Inter, sans-serif; font-weight: 900; font-size: 34px; letter-spacing: -0.015em">{{product.name}}</span>
+<span style="font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 999px; background: {{product.color}}; color: {{product.fg}}; border: 1.5px solid {{mInk}}">{{product.zoneName}}</span>
+</div>
+<p style="margin: 0; font-family: 'Libre Caslon Text', serif; font-style: italic; font-size: 22px; line-height: 1.35; max-width: 480px">“{{product.phrase}}”</p>
+<p style="margin: 0; font-size: 16px; max-width: 480px; opacity: 0.85">{{product.desc}}</p>
+<div style="display: flex; align-items: center; gap: 14px">
+<span style="font-weight: 800; font-size: 22px; padding: 2px 12px; background: {{accent}}; color: #0E0B1F">{{product.priceLabel}}</span>
+<sc-if value="{{ isLlavero }}" hint-placeholder-val="{{ false }}">
+<button class="bf-btn" aria-pressed="{{dark}}" onClick="{{ toggleDark }}" style="min-height: 44px; padding: 8px 18px; border-radius: 999px; border: 2px solid {{mInk}}; background: transparent; color: {{mInk}}; font-weight: 700; font-size: 14px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px">
+<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6 M10 21h4 M12 3a6 6 0 0 0-4 10.5c.8.8 1 1.5 1 2.5h6c0-1 .2-1.7 1-2.5A6 6 0 0 0 12 3z"></path></svg>{{darkLabel}}</button>
+</sc-if>
+</div>
+<div role="group" aria-label="Elegí un producto" style="display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; max-width: 520px">
+<sc-for list="{{ merchThumbs }}" as="t" hint-placeholder-count="5">
+<button class="bf-chip" aria-pressed="{{t.active}}" aria-label="{{t.name}}" onClick="{{ t.pick }}" style="padding: 0; border-radius: 10px; border: 2px solid {{t.border}}; background: transparent; cursor: pointer; overflow: hidden; aspect-ratio: 1 / 1; box-shadow: {{t.shadow}}">
+<img src="{{t.img}}" alt="" style="display: block; width: 100%; height: 100%; object-fit: cover">
+</button>
+</sc-for>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: 12px; margin-top: 6px">
+<button class="bf-btn" aria-label="Producto anterior" onClick="{{ prevMerch }}" style="width: 52px; height: 52px; border-radius: 50%; border: 2px solid {{mInk}}; background: transparent; color: {{mInk}}; cursor: pointer; display: flex; align-items: center; justify-content: center"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5 M11 6l-6 6 6 6"></path></svg></button>
+<button class="bf-btn" aria-label="Producto siguiente" onClick="{{ nextMerch }}" style="width: 52px; height: 52px; border-radius: 50%; border: 2px solid {{mInk}}; background: transparent; color: {{mInk}}; cursor: pointer; display: flex; align-items: center; justify-content: center"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14 M13 6l6 6-6 6"></path></svg></button>
+<a class="bf-btn" href="#tienda" style="min-height: 52px; padding: 14px 28px; border-radius: 999px; background: {{mBtnBg}}; color: {{mBtnFg}}; text-decoration: none; font-weight: 700; font-size: 17px; display: inline-flex; align-items: center; gap: 10px">Ir a la tienda
+<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14 M13 6l6 6-6 6"></path></svg></a>
+</div>
+</div>
+</div>
+</div>
+<div ref="{{ printRefs.r5 }}" aria-hidden="true" class="bf-print {{ prints.p5.cls }}" style="{{ prints.p5.pos }}; transform: rotate({{ prints.p5.rot }}deg)">
+<div class="pp" style="border-radius: {{ prints.p5.br }}"></div><div class="pb2" style="border-radius: {{ prints.p5.br2 }}"></div><div class="pb" style="border-radius: {{ prints.p5.br }}"></div>
+<div class="pl">
+<sc-if value="{{ prints.p5.isLogo }}" hint-placeholder-val="{{ false }}"><img src="assets/img/hojas-logo-mascara.png" alt="" style="position: absolute; left: {{ prints.p5.ix }}px; top: 70px; width: 150px; height: auto; filter: brightness(0) invert(1); opacity: 0.95; transform: rotate({{ prints.p5.irot }}deg)"></sc-if>
+<sc-if value="{{ prints.p5.isSvg }}" hint-placeholder-val="{{ false }}"><svg viewBox="0 0 300 300" width="300" height="300" style="position: absolute; left: 0; top: 0"><path d="{{ prints.p5.d }}" fill="#FFFFFF" fill-opacity="0.94"></path><path d="{{ prints.p5.stem }}" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-opacity="0.94"></path></svg></sc-if>
+</div>
+<span class="pt" style="{{ prints.p5.tpos }}">{{ prints.p5.label }}</span>
+</div>
+</section>
+
+
+<!-- ============ FOOTER ============ -->
+<footer style="position: relative; background: {{accent}}">
+<div style="position: relative; z-index: 1; max-width: 1320px; margin: 0 auto; padding: 64px 24px 40px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 32px; align-items: flex-end">
+<div style="display: flex; flex-direction: column; gap: 18px">
+<img src="assets/img/logo-bioferia.png" alt="Bioferia, orbitemos consciente" style="width: min(360px, 80vw); height: auto; display: block">
+<p style="margin: 0; font-family: 'Libre Caslon Text', serif; font-style: italic; font-size: 20px">La Tierra es eterna, <b>nosotros no.</b> El cambio <b>es hoy.</b></p>
+</div>
+<div style="display: flex; flex-direction: column; gap: 8px; font-weight: 600">
+<span>09, 10 y 11 de abril de 2027</span>
+<span>Hipódromo de Palermo, Buenos Aires</span>
+<a href="https://www.instagram.com/nimia_bioferia/" target="_blank" rel="noopener" style="display: inline-flex; align-items: center; gap: 8px; min-height: 32px"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h10a4 4 0 0 1 4 4v10a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V7a4 4 0 0 1 4-4z M12 16a4 4 0 1 0 0-8 4 4 0 0 0 0 8z M17.5 6.5h.01"></path></svg>Instagram · @nimia_bioferia</a>
+<a href="https://x.com/abuela_bioferia" target="_blank" rel="noopener" style="display: inline-flex; align-items: center; gap: 8px; min-height: 32px"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 4l16 16 M20 4L4 20"></path></svg>X · @abuela_bioferia</a>
+<span style="font-weight: 400; font-size: 14px">© 2027 Bioferia · Página diseñada por <a href="mailto:nimia.agencia@gmail.com" style="font-weight: 600">nimia.agencia@gmail.com</a></span>
+</div>
+</div>
+</footer>
+
+</div>
+</div>
+</template>
+
+<noscript><p style="padding:24px;font-family:sans-serif">Bioferia necesita JavaScript activado para mostrarse.</p></noscript>
+<script src="js/runtime.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
